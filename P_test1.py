@@ -112,7 +112,7 @@ class Pixiv():
         pagevalues = str(allpage[-1:])
         now_page = bookmark_soup.find('li',class_='current').get_text()
         now_page = str(now_page)
-        print unicode('您的收藏夹共有%s页 当前位于第%s页' % (pagevalues,now_page),'utf-8')
+        print '您的收藏夹共有%s页 当前位于第%s页' % (pagevalues,now_page)
         x = int(now_page)
         pagenum = int(pagevalues)
         for x in range(1,pagenum+1):
@@ -136,23 +136,23 @@ class Pixiv():
         C_member_illust_urlList = []
 
         x = 0
-        print unicode('本收藏页所有收藏链接为：','utf-8')
+        print '本收藏页所有收藏链接为：'
         for illust_url in B_member_illust_url:
             global li_url
             li_url = 'https://www.pixiv.net/member_illust.php?mode=medium&illust_id=%s' % illust_url   #根据收藏链接的id值和收藏链接的格式，生成收藏链接
             C_member_illust_urlList.append(li_url)
             print li_url
             x+=1
-        print unicode('本页共%s个收藏' % x,'utf-8')
+        print '本页共%s个收藏' % x
 
         for i in range(0,x):
             c = i+1
-            print unicode('正在获取本页第%s个收藏的页面' % c,'utf-8')
+            print '正在获取本页第%s个收藏的页面' % c
             try:
                 li_html = se.get(C_member_illust_urlList[i],headers = self.headers).text    #打印出这个收藏链接的HTML   其中包含收藏链接页的图片
             except:
                 self.defeatFileList.append(C_member_illust_urlList[i])
-                print unicode('页面获取失败  可能触发了反爬虫 url已添加进失败列表 歇会再试吧','utf-8')
+                print '页面获取失败  可能触发了反爬虫 url已添加进失败列表 歇会再试吧'
             print C_member_illust_urlList[i]
             self.url_id = C_member_illust_urlList[i][-8:]
             # print li_html
@@ -174,15 +174,14 @@ class Pixiv():
                 rawimg_type = str_urlTOimgType[-3:]
                 if rawimg_type == 'jpg':
                                             #这两句输出  在打包EXE的时候老是出故障  干脆注释掉了
-                    # print unicode('%s 图片标题：%s 尺寸：%s %s x %s' % (rawimg_url,rawimg_title,rawimg_h,rawimg_w,rawimg_type),'utf-8')
-                    return True
+                    print '%s 图片标题：%s 尺寸：%s x %s  %s' % (rawimg_url,rawimg_title,rawimg_h,rawimg_w,rawimg_type)
                 else:
                     rawimg_type = 'png'
-                    # print unicode('%s 图片标题：%s 尺寸：%s %s x %s' % (rawimg_url,rawimg_title,rawimg_h,rawimg_w,rawimg_type),'utf-8')
+                    print '%s 图片标题：%s 尺寸：%s x %s  %s' % (rawimg_url,rawimg_title,rawimg_h,rawimg_w,rawimg_type)
                 self.download_image(rawimg_url,rawimg_title,rawimg_type)   #将分析出来的数据传递到download_image方法进行图片的保存操作
                 time.sleep(random.randint(1,5))
         else:
-            print unicode('此页面有多张图片，将使用其他方法进行解析','utf-8')
+            print '此页面有多张图片，将使用其他方法进行解析'
             self.morePics_deal(readMorelink)
 
             #如果查看更多的值不为空的话，暂时还没有想好怎么写 可以写一个方法来专门处理单个收藏夹有多张图片的方法
@@ -194,27 +193,27 @@ class Pixiv():
             img = se.get(img_url,headers = src_headers)    #获取原图页面
             bytes = img.content    #获取原图数据
         except:
-            print unicode('图片获取失败 可能触发了反爬虫 请稍后重新运行','utf-8')
+            print '图片获取失败 可能触发了反爬虫 请稍后重新运行'
 
         f_name = rawimg_title.replace('?', '_').replace('/', '_').replace('\\', '_').replace('*', '_').replace('|', '_').replace('>', '_').replace('<', '_').replace(':', '_').replace('"', '_').strip()
         try:
             is_exists = os.path.exists(self.load_path+f_name+'.'+rawimg_type)
             if is_exists == True:
-                print unicode('图片名称重复，图片 %s 准备更名后保存'% f_name,'utf-8')
+                print '图片名称重复，图片 %s 准备更名后保存'% f_name
                 newf_name = self.picNameRepeat(f_name)
                 f = open('F:\Pixiv_pic\\'+newf_name+'.'+rawimg_type,'wb')        #将图片以二进制形式进行保存
                 f.write(bytes)      #将文件写入打开的目录
                 f.flush()         #将数据更新至打开的目录
                 f.close()         #关闭目录
-                print unicode('图片 %s 已保存成功' % newf_name,'','utf-8')
+                print '图片 %s 已保存成功' % newf_name
             else:
                 f = open(self.load_path+f_name+'.'+rawimg_type,'wb')        #将图片以二进制形式进行保存
                 f.write(bytes)      #将文件写入打开的目录
                 f.flush()         #将数据更新至打开的目录
                 f.close()         #关闭目录
-                print unicode('图片 %s 已保存成功'% f_name,'','utf-8')
+                print '图片 %s 已保存成功'% f_name
         except:
-            print unicode('图片 %s 保存失败,图片链接已保存在失败列表中' % f_name,'utf-8')
+            print '图片 %s 保存失败,图片链接已保存在失败列表中' % f_name
             self.defeatFileList.append(img_url)
 
     def picNameRepeat(self,f_name):
@@ -235,7 +234,7 @@ class Pixiv():
         try:
             html_1 = se.get(to_url,headers = self.headers).text
         except:
-            print unicode('可能被触发了反爬虫  歇会吧','utf-8')
+            print '可能被触发了反爬虫  歇会吧'
         html_soup = BeautifulSoup(html_1,'lxml')
         imglist = html_soup.find_all('a',class_ = 'full-size-container _ui-tooltip')
         for img in imglist:
@@ -257,14 +256,14 @@ class Pixiv():
         img = html_2_soup.find('img')
         imgSrc = img.get('src')
         imgType = str(imgSrc)[-3:]
-        print unicode('%s图片标题 %s %s' % (imgSrc,title,imgType),'utf-8')
+        print '%s图片标题 %s %s' % (imgSrc,title,imgType)
         self.makeDirWithMorePics(imgSrc,imgType)
 
     def makeDirWithMorePics(self,imgSrc,imgType):
         new_load_path = self.load_path+'id'+self.url_id
         is_exists = os.path.exists(new_load_path)
         if is_exists == False:
-            print unicode('创建新的文件夹 id%s'% self.url_id,'utf-8')
+            print '创建新的文件夹 id%s'% self.url_id
             os.makedirs(new_load_path)
         picNo = str(imgSrc)[66:-4]
         # print picNo
@@ -272,13 +271,13 @@ class Pixiv():
             img = se.get(imgSrc,headers = self.headers)    #获取原图页面
             bytes = img.content    #获取原图数据
         except:
-            print unicode('图片获取失败 可能触发了反爬虫 失败的图片链接已添加进失败列表 请稍后重新运行','utf-8')
+            print '图片获取失败 可能触发了反爬虫 失败的图片链接已添加进失败列表 请稍后重新运行'
         f_name = picNo
         f = open(new_load_path+'\\'+f_name+'.'+imgType,'wb')        #将图片以二进制形式进行保存
         f.write(bytes)      #将文件写入打开的目录
         f.flush()         #将数据更新至打开的目录
         f.close()         #关闭目录
-        print unicode('图片 %s 已保存成功' % f_name,'utf-8')
+        print '图片 %s 已保存成功' % f_name
 
     def work(self):
         f = open(self.load_path+'user_info.ini','r')
@@ -288,7 +287,7 @@ class Pixiv():
         self.password = lines[1][10:]
 
         self.login()
-        print unicode('保存失败的图片URL','utf-8')
+        print '保存失败的图片URL'
         for defeatUrl in self.defeatFileList:
             f2 = open(self.load_path+'defeatFileList.txt','a')
             f2.write(defeatUrl+'\n')
